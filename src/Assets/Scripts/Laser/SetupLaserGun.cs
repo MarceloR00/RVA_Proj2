@@ -5,13 +5,14 @@ using UnityEngine;
 public class SetupLaserGun : MonoBehaviour, ISetupLaser
 {
     [SerializeField] private Transform startPoint;
+    [SerializeField] private Transform directionPoint;
 
     public Vector3 GetLaserStartPoint() {
         return startPoint.position;
     }
 
     public Vector3 GetLaserDirection() {
-        return transform.right;
+        return directionPoint.position - startPoint.position;
     }
 
     public Vector3 GetLaserEndPoint(Vector3 startPoint, Vector3 laserDiretion) {
