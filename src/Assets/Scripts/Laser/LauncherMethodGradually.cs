@@ -14,7 +14,7 @@ public class LauncherMethodGradually : MonoBehaviour, ILauncherMethod
     float totalTime;
     float startTime;
 
-    void Start() {
+    void Awake() {
         lineRenderer = GetComponent<LineRenderer>();
     }
 

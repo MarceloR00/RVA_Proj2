@@ -13,14 +13,13 @@ public class LaserManager : MonoBehaviour
 
     GameObject target;
 
-    void Start() {
+    void Awake() {
         setupLaser = GetComponent<ISetupLaser>();
         launcherMethod = GetComponent<ILauncherMethod>();
-
-        SetupAndLaunchLaser();
+        Debug.Log(setupLaser);
     }
 
-    void SetupAndLaunchLaser() {
+    public void SetupAndLaunchLaser() {
         SetupLaser();
         LaunchLaser();
     }
