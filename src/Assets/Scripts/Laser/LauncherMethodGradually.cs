@@ -8,35 +8,54 @@ public class LauncherMethodGradually : MonoBehaviour, ILauncherMethod
 
     LineRenderer lineRenderer;
 
+    Vector3 startPoint;
+    Vector3 endPoint;
+
+    float totalTime;
+    float startTime;
+
     void Start() {
         lineRenderer = GetComponent<LineRenderer>();
     }
 
-    public void Launch(Vector3 startPoint, Vector3 endPoint) {
-        StartCoroutine(LaunchCoroutine(startPoint, endPoint));
+    public void Launch(Vector3 startPoint, Vector3 endPoint, LaserManager laserManager) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+
+        StartCoroutine(LaunchCoroutine(laserManager));
     }
 
-    IEnumerator LaunchCoroutine(Vector3 startPoint, Vector3 endPoint) {
-        lineRenderer.SetPosition(0, startPoint);
-
-        float distance = Mathf.Sqrt(Mathf.Pow(startPoint.x - endPoint.x, 2) + Mathf.Pow(startPoint.z - endPoint.z, 2));
-        float totalTime = timePerUnit * distance;
-
-        float startTime = Time.time;
+    IEnumerator LaunchCoroutine(LaserManager laserManager) {
+        Setup();
 
         while (true) {
-            float elapsedTime = Time.time - startTime;
-            float factor = elapsedTime / totalTime;
-
-            Vector3 currentEndPoint = Vector3.Lerp(startPoint, endPoint, factor);
-
-            lineRenderer.SetPosition(1, currentEndPoint);
-
-            if (currentEndPoint == endPoint) {
+            if (GoToNextPoint()) {
                 break;
             }
 
             yield return null;
         }
+
+        laserManager.NotifyTarget();
+    }
+
+    void Setup() {
+        float distance = Mathf.Sqrt(Mathf.Pow(startPoint.x - endPoint.x, 2) + Mathf.Pow(startPoint.z - endPoint.z, 2));
+        totalTime = timePerUnit * distance;
+
+        startTime = Time.time;
+
+        lineRenderer.SetPosition(0, startPoint);
+    }
+
+    bool GoToNextPoint() {
+        float elapsedTime = Time.time - startTime;
+        float factor = elapsedTime / totalTime;
+
+        Vector3 currentEndPoint = Vector3.Lerp(startPoint, endPoint, factor);
+
+        lineRenderer.SetPosition(1, currentEndPoint);
+    
+        return currentEndPoint == endPoint;
     }
 }

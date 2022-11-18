@@ -14,14 +14,4 @@ public class SetupLaserGun : MonoBehaviour, ISetupLaser
     public Vector3 GetLaserDirection() {
         return directionPoint.position - startPoint.position;
     }
-
-    public Vector3 GetLaserEndPoint(Vector3 startPoint, Vector3 laserDiretion) {
-        RaycastHit hit;
-
-        if (Physics.Raycast(startPoint, laserDiretion, out hit)) {
-            return hit.point;
-        }
-
-        return laserDiretion * 1000;
-    }
 }

@@ -11,8 +11,9 @@ public class LaserManager : MonoBehaviour
     Vector3 laserDirection;
     Vector3 laserEndPoint;
 
-    void Start()
-    {
+    GameObject target;
+
+    void Start() {
         setupLaser = GetComponent<ISetupLaser>();
         launcherMethod = GetComponent<ILauncherMethod>();
 
@@ -27,10 +28,32 @@ public class LaserManager : MonoBehaviour
     void SetupLaser() {
         laserStartPoint = setupLaser.GetLaserStartPoint();
         laserDirection = setupLaser.GetLaserDirection();
-        laserEndPoint = setupLaser.GetLaserEndPoint(laserStartPoint, laserDirection);
+
+        LockTarget();
+    }
+
+    void LockTarget() {
+        // default values for target
+        target = null;
+        laserEndPoint = laserDirection * 1000;
+
+        RaycastHit hit;
+        if (Physics.Raycast(laserStartPoint, laserDirection, out hit)) {
+            target = hit.transform.gameObject;
+            laserEndPoint = hit.point;
+        }
     }
 
     void LaunchLaser() {
-        launcherMethod.Launch(laserStartPoint, laserEndPoint);
+        launcherMethod.Launch(laserStartPoint, laserEndPoint, this);
+    }
+
+    public void NotifyTarget() {
+        if (target == null) return;
+
+        ILaserReceiver laserReceiver = target.GetComponent<ILaserReceiver>();
+        if (laserReceiver != null) {
+            laserReceiver.ReceiveLaser(laserEndPoint, laserDirection);
+        }
     }
 }
