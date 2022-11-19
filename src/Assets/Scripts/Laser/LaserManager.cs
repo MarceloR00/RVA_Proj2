@@ -16,7 +16,6 @@ public class LaserManager : MonoBehaviour
     void Awake() {
         setupLaser = GetComponent<ISetupLaser>();
         launcherMethod = GetComponent<ILauncherMethod>();
-        Debug.Log(setupLaser);
     }
 
     public void SetupAndLaunchLaser() {

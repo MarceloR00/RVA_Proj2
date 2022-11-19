@@ -5,6 +5,10 @@ using UnityEngine;
 public class Starter : MonoBehaviour
 {
     void Start() {
+        LaunchInitialLaser();
+    }
+
+    void LaunchInitialLaser() {
         GameObject laserGun = GameObject.Find("LaserGun");
         if (laserGun != null) {
             Transform laser = laserGun.transform.Find("Laser");

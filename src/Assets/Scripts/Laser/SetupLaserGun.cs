@@ -12,6 +12,6 @@ public class SetupLaserGun : MonoBehaviour, ISetupLaser
     }
 
     public Vector3 GetLaserDirection() {
-        return directionPoint.position - startPoint.position;
+        return (directionPoint.position - startPoint.position).normalized;
     }
 }

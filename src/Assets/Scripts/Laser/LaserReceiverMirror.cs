@@ -17,18 +17,30 @@ public class LaserReceiverMirror : MonoBehaviour, ILaserReceiver
     public void ReceiveLaser(Vector3 hitPoint, Vector3 incomingLaserDirection) {
         setupLaser.SetLaserStartPoint(hitPoint);
 
-        Vector3 outgoingLaserDirection = GetOutgoingLaserDirection(incomingLaserDirection);
+        Vector3 outgoingLaserDirection = GetOutgoingLaserDirection(hitPoint, incomingLaserDirection);
         setupLaser.SetLaserDirection(outgoingLaserDirection);
 
         laserManager.SetupAndLaunchLaser();
     }
 
-    Vector3 GetOutgoingLaserDirection(Vector3 incomingLaserDirection) {
-        Vector3 perpendicular = transform.right;
+    Vector3 GetOutgoingLaserDirection(Vector3 hitPoint, Vector3 incomingLaserDirection) {
+        Transform centerPoint = transform.Find("Center");
+        Transform perpendicularPoint = transform.Find("Perpendicular");
 
-        float angle = Vector3.Angle(incomingLaserDirection, perpendicular);
+        if (centerPoint == null || perpendicularPoint == null) return Vector3.positiveInfinity;
 
-        Vector3 outgoingLaserDirection = Quaternion.AngleAxis(-angle, perpendicular) * perpendicular;
+        Vector3 perpendicular = (perpendicularPoint.position - centerPoint.position).normalized;
+        incomingLaserDirection = new Vector3(-incomingLaserDirection.x, -incomingLaserDirection.y, -incomingLaserDirection.z);
+
+        float angle = Vector3.SignedAngle(incomingLaserDirection, perpendicular, Vector3.up);
+        Vector3 outgoingLaserDirection = Vector3.positiveInfinity;
+        if (Mathf.Abs(angle) > 90) {
+            perpendicular = new Vector3(-perpendicular.x, -perpendicular.y, -perpendicular.z);
+            angle = Vector3.SignedAngle(incomingLaserDirection, perpendicular, Vector3.up);
+        }
+
+        outgoingLaserDirection = Quaternion.AngleAxis(angle, Vector3.up) * perpendicular;
+        float newAngle = Vector3.SignedAngle(outgoingLaserDirection, perpendicular, Vector3.up);
 
         return outgoingLaserDirection;
     }
