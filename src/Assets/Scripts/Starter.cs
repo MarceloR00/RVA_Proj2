@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Starter : MonoBehaviour
 {
-    void Start() {
-        LaunchInitialLaser();
+    void Update() {
+        if(Input.GetKeyDown(KeyCode.Space)) {
+            LaunchInitialLaser();
+        }
     }
 
-    void LaunchInitialLaser() {
+    public void LaunchInitialLaser() {
         GameObject laserGun = GameObject.Find("LaserGun");
         if (laserGun != null) {
             Transform laser = laserGun.transform.Find("Laser");
