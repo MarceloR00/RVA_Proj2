@@ -2,56 +2,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserManager : MonoBehaviour
+public class LaserManager : MonoBehaviour, IMirrorObserver
 {
-    ISetupLaser setupLaser;
-    ILauncherMethod launcherMethod;
+    bool start = false;
 
-    Vector3 laserStartPoint;
-    Vector3 laserDirection;
-    Vector3 laserEndPoint;
+    public GameObject laser;
+    public Transform startPoint;
+    public Transform directionPoint;
+    Vector3 direction;
 
-    GameObject target;
+    LineRenderer lineRenderer;
+    List<Vector3> laserIndices;
 
-    void Awake() {
-        setupLaser = GetComponent<ISetupLaser>();
-        launcherMethod = GetComponent<ILauncherMethod>();
+    void Start() {
+        lineRenderer = laser.GetComponent<LineRenderer>();
+        laserIndices = new List<Vector3>();
+        direction = (directionPoint.position - startPoint.position).normalized;
     }
 
-    public void SetupAndLaunchLaser() {
-        SetupLaser();
-        LaunchLaser();
+    public void CanStart() {
+        start = true;
+
+        UpdateLaser();
     }
 
-    void SetupLaser() {
-        laserStartPoint = setupLaser.GetLaserStartPoint();
-        laserDirection = setupLaser.GetLaserDirection();
-
-        LockTarget();
+    public void MirrorTransformChanged() {
+        UpdateLaser();
     }
 
-    void LockTarget() {
-        // default values for target
-        target = null;
-        laserEndPoint = laserDirection * 1000;
+    void UpdateLaser() {
+        if (!start) return;
+
+        ClearLaserIndices();
+        ComputeLaserIndices(startPoint.position, direction);
+        UpdateLaserIndices();
+    }
+
+    void ClearLaserIndices() {
+        lineRenderer.positionCount = 0;
+        laserIndices.Clear();
+    }
+
+    void UpdateLaserIndices() {
+        lineRenderer.positionCount = laserIndices.Count;
+        for (int i = 0; i < laserIndices.Count; i++) {
+            lineRenderer.SetPosition(i, laserIndices[i]);
+        }
+    }
+
+    void ComputeLaserIndices(Vector3 startPoint, Vector3 direction) {
+        laserIndices.Add(startPoint);
 
         RaycastHit hit;
-        if (Physics.Raycast(laserStartPoint, laserDirection, out hit)) {
-            target = hit.transform.gameObject;
-            laserEndPoint = hit.point;
+        if (Physics.Raycast(startPoint, direction, out hit)) {
+            CollidedWithObject(hit, direction);
+        }
+        else {
+            NotCollidedWithObject(direction);
         }
     }
 
-    void LaunchLaser() {
-        launcherMethod.Launch(laserStartPoint, laserEndPoint, this);
+    void CollidedWithObject(RaycastHit hit, Vector3 direction) {
+        if (hit.collider.gameObject.tag == "Mirror") {
+            CollidedWithMirror(hit, direction);
+        }
+        else {
+            laserIndices.Add(hit.point);
+        }
+
     }
 
-    public void NotifyTarget() {
-        if (target == null) return;
+    void CollidedWithMirror(RaycastHit hit, Vector3 direction) {
+        Vector3 nextStartPoint = hit.point;
+        Vector3 nextStartDirection = Vector3.Reflect(direction, hit.normal);
 
-        ILaserReceiver laserReceiver = target.GetComponent<ILaserReceiver>();
-        if (laserReceiver != null) {
-            laserReceiver.ReceiveLaser(laserEndPoint, laserDirection);
-        }
+        ComputeLaserIndices(nextStartPoint, nextStartDirection);
+    }
+
+    void NotCollidedWithObject(Vector3 direction) {
+        laserIndices.Add(direction * 100);
     }
 }

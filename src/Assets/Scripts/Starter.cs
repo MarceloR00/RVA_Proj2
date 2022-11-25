@@ -13,11 +13,8 @@ public class Starter : MonoBehaviour
     public void LaunchInitialLaser() {
         GameObject laserGun = GameObject.Find("LaserGun");
         if (laserGun != null) {
-            Transform laser = laserGun.transform.Find("Laser");
-            if (laser != null) {
-                laser.GetComponent<LaserManager>().SetupAndLaunchLaser();
-                return;
-            }
+            laserGun.GetComponent<LaserManager>().CanStart();
+            return;
         }
 
         Debug.Log("Couldn't find Laser Gun!");
