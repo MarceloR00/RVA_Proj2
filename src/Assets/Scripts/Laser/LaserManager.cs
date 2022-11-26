@@ -17,12 +17,12 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
     void Start() {
         lineRenderer = laser.GetComponent<LineRenderer>();
         laserIndices = new List<Vector3>();
-        direction = (directionPoint.position - startPoint.position).normalized;
     }
 
     public void CanStart() {
         start = true;
-
+        direction = (directionPoint.position - startPoint.position).normalized;
+        
         UpdateLaser();
     }
 
