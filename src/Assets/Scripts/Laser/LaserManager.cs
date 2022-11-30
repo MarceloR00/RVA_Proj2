@@ -19,7 +19,7 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
         laserIndices = new List<Vector3>();
     }
 
-    public void CanStart() {
+    public void LaunchLaser() {
         start = true;
         direction = (directionPoint.position - startPoint.position).normalized;
         
@@ -33,12 +33,12 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
     void UpdateLaser() {
         if (!start) return;
 
-        ClearLaserIndices();
+        RemoveLaser();
         ComputeLaserIndices(startPoint.position, direction);
         UpdateLaserIndices();
     }
 
-    void ClearLaserIndices() {
+    public void RemoveLaser() {
         lineRenderer.positionCount = 0;
         laserIndices.Clear();
     }

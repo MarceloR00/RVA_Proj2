@@ -13,7 +13,7 @@ public class Starter : MonoBehaviour
     public void LaunchInitialLaser() {
         GameObject laserGun = GameObject.Find("LaserGun");
         if (laserGun != null) {
-            laserGun.GetComponent<LaserManager>().CanStart();
+            laserGun.GetComponent<LaserManager>().LaunchLaser();
             return;
         }
 
