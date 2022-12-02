@@ -14,6 +14,8 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
     LineRenderer lineRenderer;
     List<Vector3> laserIndices;
 
+    GameObject target = null;
+
     void Start() {
         lineRenderer = laser.GetComponent<LineRenderer>();
         laserIndices = new List<Vector3>();
@@ -33,9 +35,13 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
     void UpdateLaser() {
         if (!start) return;
 
+        target = null;
+
         RemoveLaser();
         ComputeLaserIndices(startPoint.position, direction);
         UpdateLaserIndices();
+
+        NotifyTarget();
     }
 
     public void RemoveLaser() {
@@ -67,6 +73,10 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
             CollidedWithMirror(hit, direction);
         }
         else {
+            if (hit.collider.gameObject.tag == "Target") {
+                target = hit.collider.gameObject;
+            }
+
             laserIndices.Add(hit.point);
         }
 
@@ -81,5 +91,14 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
 
     void NotCollidedWithObject(Vector3 direction) {
         laserIndices.Add(direction * 100);
+    }
+
+    void NotifyTarget() {
+        if (target == null) return;
+
+        TargetManager targetManager = target.GetComponent<TargetManager>();
+        if (targetManager != null) {
+            targetManager.LaserHit();
+        }
     }
 }
