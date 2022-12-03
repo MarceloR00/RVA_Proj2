@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class LevelPassed : MonoBehaviour
 {
-
     [SerializeField] string nextSceneName;
 
     public void NextLevelActioned() {
