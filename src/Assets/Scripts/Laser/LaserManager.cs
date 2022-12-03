@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserManager : MonoBehaviour, IMirrorObserver
+public class LaserManager : MonoBehaviour
 {
     bool start = false;
 
@@ -21,14 +21,19 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
         laserIndices = new List<Vector3>();
     }
 
-    public void LaunchLaser() {
-        start = true;
-        direction = (directionPoint.position - startPoint.position).normalized;
-        
-        UpdateLaser();
+    void Update() {
+        LaunchLaser();
     }
 
-    public void MirrorTransformChanged() {
+    public void CanStart() {
+        start = true;
+        LaunchLaser();
+    }
+
+    void LaunchLaser() {
+        direction = (directionPoint.position - startPoint.position).normalized;
+        direction.y = 0;
+
         UpdateLaser();
     }
 
@@ -96,7 +101,7 @@ public class LaserManager : MonoBehaviour, IMirrorObserver
     void NotifyTarget() {
         if (target == null) return;
 
-        TargetManager targetManager = target.GetComponent<TargetManager>();
+        TargetManager targetManager = target.transform.parent.GetComponent<TargetManager>();
         if (targetManager != null) {
             targetManager.LaserHit();
         }
