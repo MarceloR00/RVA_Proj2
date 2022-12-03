@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class LevelManager: MonoBehaviour {
+public class LevelManager: MonoBehaviour {
 
     bool mapInPlace = false;
-    LaserManager laserManager = null;
-    [SerializeField] int numberOfTargetsToReach = 1;
     int numberOfTargetsReached = 0;
+    LaserManager laserManager = null;
 
-    protected abstract void LoadNextLevel();
+    [SerializeField] int numberOfTargetsToReach = 1;
+    [SerializeField] GameObject gameInfo;
+    [SerializeField] GameObject nextLevelMenu;
+    [SerializeField] GameObject gameElements;
 
     void Update() {
         if(Input.GetKeyDown(KeyCode.Space) && mapInPlace) {
@@ -48,4 +50,9 @@ public abstract class LevelManager: MonoBehaviour {
         
     }
 
+    void LoadNextLevel() {
+        gameInfo.SetActive(!gameInfo.activeSelf);
+        gameElements.SetActive(!gameElements.activeSelf);
+        nextLevelMenu.SetActive(!nextLevelMenu.activeSelf);
+    }
 }
