@@ -25,9 +25,14 @@ public class LaserManager : MonoBehaviour
         LaunchLaser();
     }
 
-    public void CanStart() {
+    public void TurnOnLaserGun() {
         start = true;
         LaunchLaser();
+    }
+
+    public void TurnOffLaserGun() {
+        start = false;
+        RemoveLaser();
     }
 
     void LaunchLaser() {
@@ -49,7 +54,7 @@ public class LaserManager : MonoBehaviour
         NotifyTarget();
     }
 
-    public void RemoveLaser() {
+    void RemoveLaser() {
         lineRenderer.positionCount = 0;
         laserIndices.Clear();
     }
@@ -90,6 +95,7 @@ public class LaserManager : MonoBehaviour
     void CollidedWithMirror(RaycastHit hit, Vector3 direction) {
         Vector3 nextStartPoint = hit.point;
         Vector3 nextStartDirection = Vector3.Reflect(direction, hit.normal);
+        nextStartDirection.y = 0;
 
         ComputeLaserIndices(nextStartPoint, nextStartDirection);
     }

@@ -21,7 +21,7 @@ public abstract class LevelManager: MonoBehaviour {
         GameObject laserGun = GameObject.Find("LaserGun");
         if (laserGun != null) {
             laserManager = laserGun.GetComponent<LaserManager>();
-            laserManager.CanStart();
+            laserManager.TurnOnLaserGun();
             return;
         }
 
@@ -35,7 +35,7 @@ public abstract class LevelManager: MonoBehaviour {
     public void MapUndetected() {
         mapInPlace = false;
         if (laserManager != null) {
-            laserManager.RemoveLaser();
+            laserManager.TurnOffLaserGun();
         }
     }
 
