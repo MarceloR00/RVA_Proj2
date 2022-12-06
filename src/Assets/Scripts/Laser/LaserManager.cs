@@ -9,10 +9,12 @@ public class LaserManager : MonoBehaviour
     public GameObject laser;
     public Transform startPoint;
     public Transform directionPoint;
+    public Transform plane;
     Vector3 direction;
 
     LineRenderer lineRenderer;
     List<Vector3> laserIndices;
+    Plane laserPlane;
 
     GameObject target = null;
 
@@ -36,9 +38,12 @@ public class LaserManager : MonoBehaviour
     }
 
     void LaunchLaser() {
-        direction = (directionPoint.position - startPoint.position).normalized;
-        direction.y = 0;
+        laserPlane = new Plane(transform.up, startPoint.position);
+        plane.forward = -laserPlane.normal;
+        plane.position = startPoint.position;
 
+        direction = laserPlane.ClosestPointOnPlane(directionPoint.position) - laserPlane.ClosestPointOnPlane(startPoint.position);
+        
         UpdateLaser();
     }
 
@@ -74,7 +79,7 @@ public class LaserManager : MonoBehaviour
             CollidedWithObject(hit, direction);
         }
         else {
-            NotCollidedWithObject(direction);
+            NotCollidedWithObject(startPoint, direction);
         }
     }
 
@@ -94,14 +99,13 @@ public class LaserManager : MonoBehaviour
 
     void CollidedWithMirror(RaycastHit hit, Vector3 direction) {
         Vector3 nextStartPoint = hit.point;
-        Vector3 nextStartDirection = Vector3.Reflect(direction, hit.normal);
-        nextStartDirection.y = 0;
+        Vector3 nextStartDirection = laserPlane.ClosestPointOnPlane(nextStartPoint + Vector3.Reflect(direction, hit.normal)) - nextStartPoint;
 
         ComputeLaserIndices(nextStartPoint, nextStartDirection);
     }
 
-    void NotCollidedWithObject(Vector3 direction) {
-        laserIndices.Add(direction * 100);
+    void NotCollidedWithObject(Vector3 pos, Vector3 direction) {
+        laserIndices.Add(pos + direction * 100);
     }
 
     void NotifyTarget() {
