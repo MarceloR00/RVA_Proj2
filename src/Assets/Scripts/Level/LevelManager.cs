@@ -7,7 +7,7 @@ public class LevelManager: MonoBehaviour {
     bool mapInPlace = false;
     bool laserReady = false;
     float mapDetectedInstant = -1;
-    float laserSetupTime = 3f;
+    float laserSetupTime = 1f;
     int numberOfTargetsReached = 0;
     LaserManager laserManager = null;
 

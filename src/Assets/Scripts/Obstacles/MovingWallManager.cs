@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingWallManager : MonoBehaviour
-{
-    [SerializeField] float min_y;
-    [SerializeField] float max_y;
+{   
     [SerializeField] float velocity;
+    [SerializeField] float max_offset;
+    float min_y;
+    float max_y;
     
     int direction = -1;
+
+    void Start() {
+        max_y = transform.position.y;
+        min_y = transform.position.y - (transform.localScale.y * max_offset);
+    }
 
     void FixedUpdate() {
         MoveWall();
@@ -29,7 +35,8 @@ public class MovingWallManager : MonoBehaviour
             new_value_y = max_y;
         }
 
-        transform.position = new Vector3(transform.position.x, new_value_y, transform.position.z);
+        // transform.position = new Vector3(transform.position.x, new_value_y, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
     }
 
     void UpdateDirection() {

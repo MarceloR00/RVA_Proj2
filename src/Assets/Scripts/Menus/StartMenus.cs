@@ -10,11 +10,11 @@ public class StartMenus : MonoBehaviour
     }
 
     public void NormalActioned() {
-        // SceneManager.LoadScene("Scenes/Levels/Easy/LevelOneNormal");
+        SceneManager.LoadScene("Scenes/Levels/Normal/LevelOneNormal");
     }
 
     public void HardActioned() {
-        // SceneManager.LoadScene("Scenes/Levels/Easy/LevelOneHard");
+        SceneManager.LoadScene("Scenes/Levels/Hard/LevelOneHard");
     }
 
     public void QuitActioned() {
