@@ -10,7 +10,7 @@ public class MovingWallManager : MonoBehaviour
     
     int direction = -1;
 
-    void Update() {
+    void FixedUpdate() {
         MoveWall();
     }
 

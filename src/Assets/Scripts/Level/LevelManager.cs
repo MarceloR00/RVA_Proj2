@@ -5,6 +5,9 @@ using UnityEngine;
 public class LevelManager: MonoBehaviour {
 
     bool mapInPlace = false;
+    bool laserReady = false;
+    float mapDetectedInstant = -1;
+    float laserSetupTime = 3f;
     int numberOfTargetsReached = 0;
     LaserManager laserManager = null;
 
@@ -14,9 +17,21 @@ public class LevelManager: MonoBehaviour {
     [SerializeField] GameObject gameElements;
 
     void Update() {
-        if(Input.GetKeyDown(KeyCode.Space) && mapInPlace) {
+        if (mapInPlace && !laserReady) {
+            if (mapDetectedInstant < 0) return;
+
+            if ((Time.time - mapDetectedInstant) < laserSetupTime) return;
+
+            laserReady = true;
+        }
+        
+        if(Input.GetKeyDown(KeyCode.Space) && laserReady) {
             LaunchInitialLaser();
         }
+    }
+
+    public bool GetLaserReady() {
+        return laserReady;
     }
 
     public void LaunchInitialLaser() {
@@ -32,10 +47,14 @@ public class LevelManager: MonoBehaviour {
 
     public void MapDetected() {
         mapInPlace = true;
+        mapDetectedInstant = Time.time;
     }
 
     public void MapUndetected() {
         mapInPlace = false;
+        laserReady = false;
+        mapDetectedInstant = -1;
+
         if (laserManager != null) {
             laserManager.TurnOffLaserGun();
         }
