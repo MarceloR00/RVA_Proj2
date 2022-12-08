@@ -9,7 +9,6 @@ public class LaserManager : MonoBehaviour
     public GameObject laser;
     public Transform startPoint;
     public Transform directionPoint;
-    public Transform plane;
     Vector3 direction;
 
     LineRenderer lineRenderer;
@@ -39,8 +38,6 @@ public class LaserManager : MonoBehaviour
 
     void LaunchLaser() {
         laserPlane = new Plane(transform.up, startPoint.position);
-        plane.forward = -laserPlane.normal;
-        plane.position = startPoint.position;
 
         direction = laserPlane.ClosestPointOnPlane(directionPoint.position) - laserPlane.ClosestPointOnPlane(startPoint.position);
         
