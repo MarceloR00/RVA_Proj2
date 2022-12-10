@@ -8,12 +8,6 @@ public class PauseMenu : MonoBehaviour {
     [SerializeField] GameObject gameInfo;
     [SerializeField] GameObject pauseMenu;
     [SerializeField] GameObject gameElements;
-
-    void Update() {
-        if(Input.GetKeyDown(KeyCode.Escape)) {
-            EscapeActioned();
-        }
-    }
     
     public void EscapeActioned() {
         gameInfo.SetActive(!gameInfo.activeSelf);
