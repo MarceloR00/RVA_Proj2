@@ -6,6 +6,7 @@ public class LevelManager: MonoBehaviour {
 
     bool mapInPlace = false;
     bool laserReady = false;
+    bool laserActive = false;
     float mapDetectedInstant = -1;
     float laserSetupTime = 1f;
     int numberOfTargetsReached = 0;
@@ -25,8 +26,9 @@ public class LevelManager: MonoBehaviour {
             laserReady = true;
         }
         
-        if(Input.GetKeyDown(KeyCode.Space) && laserReady) {
+        if(laserReady && !laserActive) {
             LaunchInitialLaser();
+            laserActive = true;
         }
     }
 
@@ -53,6 +55,7 @@ public class LevelManager: MonoBehaviour {
     public void MapUndetected() {
         mapInPlace = false;
         laserReady = false;
+        laserActive = false;
         mapDetectedInstant = -1;
 
         if (laserManager != null) {
