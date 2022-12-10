@@ -5,6 +5,7 @@ using UnityEngine;
 public class TargetMovement : MonoBehaviour
 {
     [SerializeField] Transform[] positions;
+    [SerializeField] Transform start_position;
     [SerializeField] float velocity;
     [SerializeField] Animator animator;
 
@@ -12,21 +13,29 @@ public class TargetMovement : MonoBehaviour
     float time_took_between_points;
     float current_start_time_between_points;
 
-    bool blocked = false;
+    bool blocked = true;
+    bool dead = false;
 
-    void Start() {
-        ComputeTimeBetweenPoints();
+    // REMOVE
+    void Start(){
+        Reset();
     }
 
     public void Reset() {
-        // reset initial position
+        transform.position = start_position.position;
         current_position_index = 0;
 
         ComputeTimeBetweenPoints();
+
+        blocked = false;
+    }
+
+    public void Dead() {
+        dead = true;
     }
 
     void FixedUpdate() {
-        if (blocked) return;
+        if (blocked || dead) return;
 
         if (ReachedTargetPosition()) {
             StartCoroutine(Rotate());
@@ -37,6 +46,7 @@ public class TargetMovement : MonoBehaviour
     }
 
     void Move() {
+        
         float current_time_between_points = Time.time - current_start_time_between_points;
         float ratio = current_time_between_points / time_took_between_points;
         transform.position = Vector3.Lerp(transform.position, positions[current_position_index].position, ratio);
@@ -72,17 +82,29 @@ public class TargetMovement : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
+        if (dead) {
+            yield break;
+        }
+
         float duration = 0.42f;
         Quaternion startRotation = transform.rotation ;
         Quaternion endRotation = Quaternion.Euler( new Vector3(0, -180, 0) ) * startRotation ;
         for( float t = 0 ; t < duration ; t+= Time.deltaTime )
         {
+            if (dead) {
+                yield break;
+            }
+
             transform.rotation = Quaternion.Lerp( startRotation, endRotation, t / duration ) ;
             yield return null;
         }
-        transform.rotation = endRotation  ;
+        transform.rotation = endRotation;
         
         yield return new WaitForSeconds(0.5f);
+
+        if (dead) {
+            yield break;
+        }
 
         SetupNextMovement();
         

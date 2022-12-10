@@ -5,6 +5,7 @@ using UnityEngine;
 public class TargetManager : MonoBehaviour
 {
     LevelManager levelManager = null;
+    TargetMovement targetMovement = null;
     [SerializeField] Animator animator;
     bool dead = false;
     bool notified = false;
@@ -14,10 +15,14 @@ public class TargetManager : MonoBehaviour
         if (obj != null) {
             levelManager = obj.GetComponent<LevelManager>();
         }
+        targetMovement = GetComponent<TargetMovement>();
     }
 
     void Update() {
         if (dead) {
+            if (targetMovement != null) {
+                targetMovement.Dead();
+            }
             NotifyLevelManager();
         }
     }
