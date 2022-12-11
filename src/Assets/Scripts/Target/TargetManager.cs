@@ -10,42 +10,56 @@ public class TargetManager : MonoBehaviour
     bool dead = false;
     bool notified = false;
 
-    void Start() {
+    void Start()
+    {
         GameObject obj = GameObject.Find("LevelManager");
-        if (obj != null) {
+        if (obj != null)
+        {
             levelManager = obj.GetComponent<LevelManager>();
         }
         targetMovement = GetComponent<TargetMovement>();
     }
 
-    void Update() {
-        if (dead) {
-            if (targetMovement != null) {
-                targetMovement.Dead();
-            }
+    void Update()
+    {
+        if (dead)
+        {
             NotifyLevelManager();
         }
     }
 
-    public void LaserHit() {
-        if (!notified) {
+    public void LaserHit()
+    {
+        if (!notified)
+        {
             StartCoroutine(Die());
         }
     }
 
-    IEnumerator Die() {
+    IEnumerator Die()
+    {
         notified = true;
+
         animator.SetTrigger("Die");
+
+        if (targetMovement != null)
+        {
+            targetMovement.Dead();
+        }
+
         yield return new WaitForSeconds(3);
+
         dead = true;
     }
 
-    void NotifyLevelManager() {
-        if (levelManager == null) {
+    void NotifyLevelManager()
+    {
+        if (levelManager == null)
+        {
             Debug.Log("Couldn't find LevelManager");
             return;
         }
-        
+
         levelManager.TargetReached();
     }
 }
